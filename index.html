@@ -131,6 +131,7 @@
 var CIRC = 2 * Math.PI * 58;
 
 function resetWatchlist() {
+  if (typeof watchlist === 'undefined') { return; }
   if (Array.isArray(watchlist)) {
     watchlist.length = 0;
   }
