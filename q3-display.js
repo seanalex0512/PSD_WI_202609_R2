@@ -3,8 +3,6 @@
 // ============================================
 // Implement functions that calculate stats and display the watchlist.
 
-import { watchlist } from './q1-watchlist-setup.js';
-
 // TODO 3.1: Create the getWatchlistCount Function
 // Returns the total number of movies currently in the watchlist.
 function getWatchlistCount() {
@@ -32,5 +30,3 @@ function getAverageRating(moviesArray) {
 function displayWatchlist() {
   // Your code here
 }
-
-export { getWatchlistCount, getAverageRating, displayWatchlist };

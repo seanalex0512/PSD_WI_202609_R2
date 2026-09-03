@@ -14,11 +14,11 @@
 //   - rating: a number out of 10 (e.g. 8.5)
 //
 // You may choose any 5 movies you like.
-const movies = []; // Replace this with your 5 movie objects
+var movies = []; // Replace this with your 5 movie objects
 
 // TODO 1.2: Create the Watchlist Array
 // Create an empty array called `watchlist` that will store movies added by the user.
-const watchlist = []; // Replace this — is this correct?
+var watchlist; // Replace this with the correct value
 
 // TODO 1.3: Create the addToWatchlist Function
 // 1. Takes a `movieId` as a parameter.
@@ -38,5 +38,3 @@ function addToWatchlist(movieId) {
 function removeFromWatchlist(movieId) {
   // Your code here
 }
-
-export { movies, watchlist, addToWatchlist, removeFromWatchlist };

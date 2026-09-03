@@ -4,8 +4,6 @@
 // Implement functions that search and filter the movie database.
 // These functions should NOT modify the original movies array.
 
-import { movies } from './q1-watchlist-setup.js';
-
 // TODO 2.1: Create the searchByTitle Function
 // 1. Takes a `keyword` as a parameter (a string).
 // 2. Returns a NEW array of movies whose title contains the keyword.
@@ -31,5 +29,3 @@ function filterByGenre(genre) {
 function getTopRated(count) {
   // Your code here
 }
-
-export { searchByTitle, filterByGenre, getTopRated };

@@ -22,36 +22,22 @@ This exercise tests your understanding of:
 
 ## Project Structure
 
-| File / Folder | Description |
-|---------------|-------------|
+| File | Description |
+|------|-------------|
 | [q1-watchlist-setup.js](q1-watchlist-setup.js) | Create the movies array, watchlist, add/remove functions |
 | [q2-search-filter.js](q2-search-filter.js) | Search by title, filter by genre, get top rated |
 | [q3-display.js](q3-display.js) | Count, average rating, display functions |
-| `tests/` | Test runner, test cases, and live server **(do not modify)** |
+| [index.html](index.html) | Test runner UI **(do not modify)** |
 
 ---
 
 ## Getting Started
 
-### Prerequisites
+1. Open `index.html` in your browser.
+2. Edit the `q1`–`q3` `.js` files in your editor.
+3. Refresh the browser to re-run the tests.
 
-- Node.js >= 18
-
-### Setup
-
-1. Start the live test UI:
-   ```bash
-   npm run dev
-   ```
-   Then open [http://localhost:3001](http://localhost:3001) in your browser.
-
-2. Edit the `q1`-`q3` files in your editor. Every time you save, the web UI updates automatically.
-
-### Alternative: CLI Testing
-
-```bash
-npm run test
-```
+No installation required — just a browser and a text editor.
 
 ---
 
@@ -65,8 +51,6 @@ The assignment is graded out of **10 marks**. Each successful test case is worth
 | Q2 | Search & Filter | 3 |
 | Q3 | Display Functions | 3 |
 | **Total** | | **10** |
-
-The live UI at [http://localhost:3001](http://localhost:3001) shows your progress in real time.
 
 ---
 

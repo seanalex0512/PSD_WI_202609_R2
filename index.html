@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Movie Watchlist — Test Results</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+
+  .container { max-width: 720px; margin: 0 auto; }
+
+  .header { text-align: center; margin-bottom: 2.5rem; }
+  .header h1 { font-size: 1.5rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.25rem; }
+  .header p { font-size: 0.875rem; color: #94a3b8; }
+
+  .score-section { display: flex; flex-direction: column; align-items: center; margin-bottom: 2rem; }
+  .score-ring { position: relative; width: 140px; height: 140px; }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-ring .bg { fill: none; stroke: #1e293b; stroke-width: 10; }
+  .score-ring .fg {
+    fill: none; stroke-width: 10; stroke-linecap: round;
+    transition: stroke-dashoffset 0.6s ease, stroke 0.3s ease;
+  }
+  .score-label {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .score-num { font-size: 2.25rem; font-weight: 800; line-height: 1; }
+  .score-total { font-size: 0.8rem; color: #94a3b8; margin-top: 2px; }
+  .status-badge {
+    margin-top: 0.75rem; padding: 0.25rem 1rem; border-radius: 999px;
+    font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .status-badge.all-pass { background: #064e3b; color: #6ee7b7; }
+  .status-badge.some-fail { background: #7f1d1d; color: #fca5a5; }
+  .status-badge.waiting { background: #1e293b; color: #94a3b8; }
+
+  .card {
+    background: #1e293b; border-radius: 12px; padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem; border: 1px solid #334155;
+    transition: border-color 0.3s ease;
+  }
+  .card.all-pass { border-color: #065f46; }
+  .card.has-fail { border-color: #991b1b; }
+
+  .card-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 0.75rem;
+  }
+  .card-title { font-size: 1rem; font-weight: 700; }
+  .card-tag {
+    font-size: 0.7rem; font-weight: 600; padding: 0.15rem 0.6rem;
+    border-radius: 999px; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .card-tag.pass { background: #064e3b; color: #6ee7b7; }
+  .card-tag.fail { background: #7f1d1d; color: #fca5a5; }
+
+  .test-item {
+    display: flex; align-items: flex-start; gap: 0.6rem;
+    padding: 0.4rem 0; font-size: 0.85rem;
+  }
+  .test-icon { flex-shrink: 0; width: 20px; text-align: center; font-weight: 700; }
+  .test-icon.pass { color: #34d399; }
+  .test-icon.fail { color: #f87171; }
+  .test-name { color: #cbd5e1; }
+  .test-error {
+    font-size: 0.75rem; color: #f87171; margin-top: 0.15rem;
+    font-family: 'JetBrains Mono', monospace; white-space: pre-wrap; word-break: break-all;
+  }
+
+  .run-btn {
+    display: block; margin: 0 auto 2rem; padding: 0.6rem 2rem;
+    background: #3b82f6; color: #fff; border: none; border-radius: 8px;
+    font-size: 0.9rem; font-weight: 600; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .run-btn:hover { background: #2563eb; }
+
+  .footer { text-align: center; margin-top: 2rem; font-size: 0.75rem; color: #475569; }
+
+  .fade-in { animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>Movie Watchlist</h1>
+    <p>Problem Solving Week &mdash; Individual Challenge</p>
+  </div>
+
+  <div class="score-section">
+    <div class="score-ring">
+      <svg viewBox="0 0 140 140" width="140" height="140">
+        <circle class="bg" cx="70" cy="70" r="58" />
+        <circle class="fg" id="scoreFg" cx="70" cy="70" r="58"
+          stroke-dasharray="364.42" stroke-dashoffset="364.42" />
+      </svg>
+      <div class="score-label">
+        <span class="score-num" id="scoreNum">-</span>
+        <span class="score-total" id="scoreTotal">/ -</span>
+      </div>
+    </div>
+    <div class="status-badge waiting" id="statusBadge">Waiting...</div>
+  </div>
+
+  <button class="run-btn" onclick="runTests()">Run Tests</button>
+
+  <div id="results"></div>
+
+  <div class="footer">
+    Edit your q1&ndash;q3 .js files, then click <strong>Run Tests</strong> to check your work.
+  </div>
+</div>
+
+<!-- Load student files (order matters: q1 first since q2/q3 use its variables) -->
+<script src="q1-watchlist-setup.js"></script>
+<script src="q2-search-filter.js"></script>
+<script src="q3-display.js"></script>
+
+<script>
+var CIRC = 2 * Math.PI * 58;
+
+function resetWatchlist() {
+  if (Array.isArray(watchlist)) {
+    watchlist.length = 0;
+  }
+}
+
+function test(name, fn) {
+  try {
+    var passed = fn();
+    return { name: name, passed: !!passed };
+  } catch (e) {
+    return { name: name, passed: false, error: e.message || String(e) };
+  }
+}
+
+function runAllTests() {
+  return [
+    {
+      question: "Q1",
+      title: "Watchlist Setup",
+      tests: [
+        test("movies array has 5 objects with id, title, genre, year, rating", function () {
+          return (
+            Array.isArray(movies) &&
+            movies.length === 5 &&
+            movies.every(function (m) {
+              return (
+                typeof m.id === "number" &&
+                typeof m.title === "string" &&
+                typeof m.genre === "string" &&
+                typeof m.year === "number" &&
+                typeof m.rating === "number"
+              );
+            })
+          );
+        }),
+
+        test("watchlist starts as an empty array", function () {
+          resetWatchlist();
+          return Array.isArray(watchlist) && watchlist.length === 0;
+        }),
+
+        test("addToWatchlist adds a valid movie, rejects invalid ID and duplicates", function () {
+          resetWatchlist();
+          var firstMovie = movies[0];
+          var result = addToWatchlist(firstMovie.id);
+          var invalidResult = addToWatchlist(999);
+          var dupResult = addToWatchlist(firstMovie.id);
+          return (
+            result === true &&
+            invalidResult === false &&
+            dupResult === false &&
+            watchlist.length === 1 &&
+            watchlist[0].id === firstMovie.id
+          );
+        }),
+
+        test("removeFromWatchlist removes a movie and returns correct booleans", function () {
+          resetWatchlist();
+          var first = movies[0];
+          var second = movies[1];
+          addToWatchlist(first.id);
+          addToWatchlist(second.id);
+          var removed = removeFromWatchlist(first.id);
+          var notFound = removeFromWatchlist(999);
+          return (
+            removed === true &&
+            notFound === false &&
+            watchlist.length === 1 &&
+            watchlist[0].id === second.id
+          );
+        })
+      ]
+    },
+
+    {
+      question: "Q2",
+      title: "Search & Filter",
+      tests: [
+        test("searchByTitle returns matching movies case-insensitively", function () {
+          var firstTitle = movies[0].title;
+          var keyword = firstTitle.slice(0, 3);
+          var results = searchByTitle(keyword);
+          var upperResults = searchByTitle(keyword.toUpperCase());
+          var noResults = searchByTitle("zzzzzxxx");
+          return (
+            Array.isArray(results) &&
+            results.length > 0 &&
+            results.every(function (m) {
+              return m.title.toLowerCase().includes(keyword.toLowerCase());
+            }) &&
+            upperResults.length === results.length &&
+            Array.isArray(noResults) &&
+            noResults.length === 0
+          );
+        }),
+
+        test("filterByGenre returns correct movies for a genre", function () {
+          var targetGenre = movies[0].genre;
+          var expected = movies.filter(function (m) {
+            return m.genre.toLowerCase() === targetGenre.toLowerCase();
+          });
+          var results = filterByGenre(targetGenre);
+          var lowerResults = filterByGenre(targetGenre.toLowerCase());
+          var none = filterByGenre("zzzNoGenre");
+          return (
+            Array.isArray(results) &&
+            results.length === expected.length &&
+            results.every(function (m) {
+              return m.genre.toLowerCase() === targetGenre.toLowerCase();
+            }) &&
+            lowerResults.length === expected.length &&
+            Array.isArray(none) &&
+            none.length === 0
+          );
+        }),
+
+        test("getTopRated returns movies sorted by rating descending", function () {
+          var top3 = getTopRated(3);
+          var all = getTopRated(100);
+          return (
+            Array.isArray(top3) &&
+            top3.length === 3 &&
+            top3[0].rating >= top3[1].rating &&
+            top3[1].rating >= top3[2].rating &&
+            Array.isArray(all) &&
+            all.length === movies.length
+          );
+        })
+      ]
+    },
+
+    {
+      question: "Q3",
+      title: "Display Functions",
+      tests: [
+        test("getWatchlistCount returns the correct count", function () {
+          resetWatchlist();
+          var empty = getWatchlistCount();
+          addToWatchlist(movies[0].id);
+          addToWatchlist(movies[1].id);
+          var two = getWatchlistCount();
+          return empty === 0 && two === 2;
+        }),
+
+        test("getAverageRating calculates the correct average", function () {
+          var avg = getAverageRating([
+            { rating: 9.0 },
+            { rating: 8.0 },
+            { rating: 7.0 }
+          ]);
+          var emptyAvg = getAverageRating([]);
+          return avg === 8.0 && emptyAvg === 0;
+        }),
+
+        test("displayWatchlist prints correct format", function () {
+          resetWatchlist();
+          var logs = [];
+          var origLog = console.log;
+          try {
+            console.log = function () {
+              var args = Array.prototype.slice.call(arguments);
+              logs.push(args.join(" "));
+            };
+
+            displayWatchlist();
+            var emptyMsg = logs.length === 1 && logs[0] === "Your watchlist is empty.";
+
+            logs.length = 0;
+            var m1 = movies[0];
+            var m2 = movies[1];
+            addToWatchlist(m1.id);
+            addToWatchlist(m2.id);
+            displayWatchlist();
+
+            var avgVal = Math.round(((m1.rating + m2.rating) / 2) * 10) / 10;
+
+            return (
+              emptyMsg &&
+              logs.length === 4 &&
+              logs[0] === "My Watchlist:" &&
+              logs[1] === "- " + m1.title + " (" + m1.year + ") \u2014 " + m1.rating + "/10" &&
+              logs[2] === "- " + m2.title + " (" + m2.year + ") \u2014 " + m2.rating + "/10" &&
+              logs[3] === "Average Rating: " + avgVal + "/10"
+            );
+          } finally {
+            console.log = origLog;
+          }
+        })
+      ]
+    }
+  ];
+}
+
+function escHtml(s) {
+  var d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function render(data) {
+  var passed = 0, total = 0;
+  data.forEach(function (q) {
+    q.tests.forEach(function (t) { total++; if (t.passed) passed++; });
+  });
+
+  var pct = total > 0 ? passed / total : 0;
+  document.getElementById('scoreFg').style.strokeDashoffset = CIRC * (1 - pct);
+  document.getElementById('scoreFg').style.stroke = pct === 1 ? '#22c55e' : pct > 0.5 ? '#eab308' : '#ef4444';
+  document.getElementById('scoreNum').textContent = passed;
+  document.getElementById('scoreTotal').textContent = '/ ' + total;
+
+  var badge = document.getElementById('statusBadge');
+  if (total === 0) {
+    badge.className = 'status-badge waiting';
+    badge.textContent = 'No tests';
+  } else if (passed === total) {
+    badge.className = 'status-badge all-pass';
+    badge.textContent = 'All Passed';
+  } else {
+    badge.className = 'status-badge some-fail';
+    badge.textContent = passed + ' of ' + total + ' passed';
+  }
+
+  var container = document.getElementById('results');
+  container.innerHTML = '';
+  data.forEach(function (q) {
+    var qPassed = q.tests.filter(function (t) { return t.passed; }).length;
+    var qTotal = q.tests.length;
+    var allPass = qPassed === qTotal;
+
+    var card = document.createElement('div');
+    card.className = 'card fade-in ' + (allPass ? 'all-pass' : 'has-fail');
+
+    var testsHtml = '';
+    q.tests.forEach(function (t) {
+      testsHtml += '<div class="test-item">';
+      testsHtml += '<span class="test-icon ' + (t.passed ? 'pass' : 'fail') + '">' + (t.passed ? '\u2713' : '\u2717') + '</span>';
+      testsHtml += '<div><div class="test-name">' + escHtml(t.name) + '</div>';
+      if (t.error) testsHtml += '<div class="test-error">' + escHtml(t.error) + '</div>';
+      testsHtml += '</div></div>';
+    });
+
+    card.innerHTML =
+      '<div class="card-header">' +
+        '<span class="card-title">' + escHtml(q.question) + ': ' + escHtml(q.title) + '</span>' +
+        '<span class="card-tag ' + (allPass ? 'pass' : 'fail') + '">' + qPassed + '/' + qTotal + '</span>' +
+      '</div>' + testsHtml;
+
+    container.appendChild(card);
+  });
+}
+
+function runTests() {
+  resetWatchlist();
+  var data = runAllTests();
+  render(data);
+  resetWatchlist();
+}
+
+// Run tests on page load
+runTests();
+</script>
+
+</body>
+</html>
