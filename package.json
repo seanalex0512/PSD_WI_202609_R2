@@ -1,0 +1,13 @@
+{
+  "name": "movie-watchlist",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests/tests.js",
+    "dev": "node tests/server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
